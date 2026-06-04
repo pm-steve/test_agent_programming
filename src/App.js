@@ -3,6 +3,8 @@ import React, { useEffect, useRef, useState } from 'react';
 function App() {
   const canvasRef = useRef(null);
   const [gameStarted, setGameStarted] = useState(false);
+  const [score1, setScore1] = useState(0);
+  const [score2, setScore2] = useState(0);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -90,8 +92,12 @@ function App() {
         ballSpeedY = collidePoint * 0.3;
       }
 
-      // Ball out of bounds => reset
-      if (ballX < 0 || ballX > canvas.width) {
+      // Ball out of bounds => update score and reset
+      if (ballX < 0) {
+        setScore2(prev => prev + 1);
+        resetBall();
+      } else if (ballX > canvas.width) {
+        setScore1(prev => prev + 1);
         resetBall();
       }
     }
@@ -144,8 +150,12 @@ function App() {
   }, [gameStarted]);
 
   return (
-    <div style={{ textAlign: 'center' }}>
+    <div style={{ textAlign: 'center', color: 'white' }}>
       <h1>Pong Game</h1>
+      <div style={{ marginBottom: 10, fontSize: 24 }}>
+        <span>Player 1: {score1}</span>
+        <span style={{ marginLeft: 30 }}>Player 2: {score2}</span>
+      </div>
       <canvas ref={canvasRef} style={{ border: '2px solid white', backgroundColor: 'black' }}></canvas>
       {!gameStarted && (
         <div style={{ marginTop: '10px' }}>

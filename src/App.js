@@ -46,6 +46,15 @@ function App() {
       ballSpeedY = 3 * (Math.random() > 0.5 ? 1 : -1);
     }
 
+    function drawScore() {
+      const fontSize = 24;
+      context.fillStyle = 'white';
+      context.font = fontSize + 'px Arial';
+      context.textAlign = 'center';
+      context.fillText(`Player 1: ${score1}`, canvas.width / 4, fontSize + 10);
+      context.fillText(`Player 2: ${score2}`, (canvas.width / 4) * 3, fontSize + 10);
+    }
+
     function update() {
       // Move paddles
       if (upPressed && paddle1Y > 0) paddle1Y -= paddleSpeed;
@@ -110,6 +119,8 @@ function App() {
       drawRect(canvas.width - paddleWidth, paddle2Y, paddleWidth, paddleHeight, 'white');
       // Draw ball
       drawBall(ballX, ballY, ballSize, 'white');
+      // Draw score
+      drawScore();
     }
 
     function gameLoop() {
@@ -147,15 +158,11 @@ function App() {
       window.removeEventListener('keydown', keyDownHandler);
       window.removeEventListener('keyup', keyUpHandler);
     };
-  }, [gameStarted]);
+  }, [gameStarted, score1, score2]);
 
   return (
     <div style={{ textAlign: 'center', color: 'white' }}>
       <h1>Pong Game</h1>
-      <div style={{ marginBottom: 10, fontSize: 24 }}>
-        <span>Player 1: {score1}</span>
-        <span style={{ marginLeft: 30 }}>Player 2: {score2}</span>
-      </div>
       <canvas ref={canvasRef} style={{ border: '2px solid white', backgroundColor: 'black' }}></canvas>
       {!gameStarted && (
         <div style={{ marginTop: '10px' }}>

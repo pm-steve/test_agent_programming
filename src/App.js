@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 function App() {
   const canvasRef = useRef(null);
+  const animationFrameId = useRef(null);
   const [gameStarted, setGameStarted] = useState(false);
   const [score1, setScore1] = useState(0);
   const [score2, setScore2] = useState(0);
@@ -61,9 +62,9 @@ function App() {
       if (downPressed && paddle1Y < canvas.height - paddleHeight) paddle1Y += paddleSpeed;
 
       // Simple AI for paddle 2
-      if (paddle2Y + paddleHeight / 2 < ballY + ballSize / 2) {
+      if (paddle2Y + paddleHeight / 2 < ballY + ballSize / 2 - 1) {
         paddle2Y += paddleSpeed * 0.6;
-      } else {
+      } else if (paddle2Y + paddleHeight / 2 > ballY + ballSize / 2 + 1) {
         paddle2Y -= paddleSpeed * 0.6;
       }
 
@@ -127,7 +128,7 @@ function App() {
       update();
       draw();
       if (gameStarted) {
-        requestAnimationFrame(gameLoop);
+        animationFrameId.current = requestAnimationFrame(gameLoop);
       }
     }
 
@@ -151,14 +152,17 @@ function App() {
     window.addEventListener('keyup', keyUpHandler);
 
     if (gameStarted) {
-      requestAnimationFrame(gameLoop);
+      animationFrameId.current = requestAnimationFrame(gameLoop);
     }
 
     return () => {
       window.removeEventListener('keydown', keyDownHandler);
       window.removeEventListener('keyup', keyUpHandler);
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
+      }
     };
-  }, [gameStarted, score1, score2]);
+  }, [gameStarted]);
 
   return (
     <div style={{ textAlign: 'center', color: 'white' }}>
